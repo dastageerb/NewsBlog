@@ -20,8 +20,10 @@ object RepositoryModule
 
     @Provides
     @Singleton
-    fun provides(localDataSource: LocalDataSource,remoteDataSource: RemoteDataSource):Repository
+    fun providesRepository(localDataSource: LocalDataSource,remoteDataSource: RemoteDataSource):Repository
     = RepositoryImpl(localDataSource,remoteDataSource)
+
+
 
 
 }

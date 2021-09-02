@@ -19,5 +19,7 @@ class NetworkMapper @Inject constructor() : EntityMapper<ArticleNetworkEntity, A
     )
 
 
+    fun mapToMode(list: List<ArticleNetworkEntity>):List<Article> =
+            list.map { mapToModel(it) }
 
 }

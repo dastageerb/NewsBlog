@@ -12,7 +12,7 @@ class RepositoryImpl(private val localDataSource: LocalDataSource,
 
     override suspend fun getHeadLines(): List<Article>
     {
-        TODO("Not yet implemented")
+        return remoteDataSource.getHeadLines()
     } /// getHeadLines closed
 
     override suspend fun getNewsByCategory(query: String, Page: Int, PagSize: Int): List<Article>
