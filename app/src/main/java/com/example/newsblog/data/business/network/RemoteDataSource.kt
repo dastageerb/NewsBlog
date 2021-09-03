@@ -9,4 +9,7 @@ interface RemoteDataSource
 {
     suspend fun getHeadLines():List<Article>
 
+
+
+
 }
