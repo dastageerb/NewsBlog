@@ -14,15 +14,10 @@
         android:theme="@style/Theme.NewsBlog"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".MainActivity"
-            android:exported="false"
+            android:name=".ui.MainActivity"
+            android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.NewsBlog">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

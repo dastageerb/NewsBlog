@@ -1,4 +1,4 @@
-package com.example.newsblog.ui.fragments.home
+package com.example.newsblog.ui
 
 import androidx.lifecycle.ViewModel
 
@@ -13,6 +13,5 @@ class HomeViewModel ():ViewModel()
 //        val headline = headline.getHeadLines();
 //        Timber.tag("1234").d("$headline")
 //    }
-
 
 }
