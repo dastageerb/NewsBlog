@@ -1,5 +1,6 @@
 package com.example.newsblog.di
 
+import com.example.newsblog.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -11,16 +12,16 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 @ExperimentalSerializationApi
-val netWorkModule = module{
+val netWorkModule = module {
 
-    single{
+    single {
         Interceptor {
-            it
-                .proceed(
-                    it.request()
-                        .newBuilder()
-                        .addHeader("","")
-                        .build())
+            it.proceed(
+                it.request()
+                    .newBuilder()
+                    .addHeader("Authorization", BuildConfig.API_KEY)
+                    .build()
+            )
         }
     }
 
@@ -29,14 +30,14 @@ val netWorkModule = module{
             .addInterceptor(get<Interceptor>())
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+            .build()
     }
 
     single {
-            Retrofit.Builder()
+        Retrofit.Builder()
             .client(get())
             .addConverterFactory(Json.asConverterFactory(("application/json".toMediaType())))
-            .baseUrl("BASE_URL")
+            .baseUrl(BuildConfig.BASE_URL)
             .build()
     }
 }
