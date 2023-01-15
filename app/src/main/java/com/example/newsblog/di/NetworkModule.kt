@@ -37,9 +37,13 @@ val netWorkModule = module {
     }
 
     single {
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
         Retrofit.Builder()
             .client(get())
-            .addConverterFactory(Json.asConverterFactory(("application/json".toMediaType())))
+            .addConverterFactory(json.asConverterFactory(("application/json".toMediaType())))
             .baseUrl(BuildConfig.BASE_URL)
             .build()
     }

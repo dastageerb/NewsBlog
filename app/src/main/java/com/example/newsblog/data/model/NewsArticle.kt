@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NewsArticle(
-    val description: String,
-    val source: Source,
-    val title: String,
-    val urlToImage: String
+    val description: String?=null,
+    val source: Source?=null,
+    val title: String?=null,
+    val urlToImage: String?=null
 )

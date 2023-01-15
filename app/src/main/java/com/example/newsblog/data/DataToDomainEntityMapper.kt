@@ -19,7 +19,7 @@ class DataToDomainEntityMapper : EntityMapper<NewsResponse, NewsArticle, Article
     override fun mapResponseToModel(remoteEntity: NewsArticle): Article {
         return Article(
             description = remoteEntity.description,
-            sourceName = remoteEntity.source.name,
+            sourceName = remoteEntity.source?.name,
             title = remoteEntity.title,
             urlToImage = remoteEntity.urlToImage,
         )
