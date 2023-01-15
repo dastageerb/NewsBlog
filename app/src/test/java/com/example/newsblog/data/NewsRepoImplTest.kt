@@ -6,7 +6,8 @@ import com.example.newsblog.data.model.NewsResponse
 import com.example.newsblog.data.model.Source
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -26,32 +27,100 @@ class NewsRepoImplTest {
 
     private var repoImpl:NewsRepoImpl?=null
 
-    private var responseToModelMapper:ResponseToModelMapper?=null
+    private val searchQuery = "tech"
 
     @Before
-    fun before(){
-        responseToModelMapper = ResponseToModelMapper()
-        repoImpl = NewsRepoImpl(newsApiService,Dispatchers.IO, responseToModelMapper!!)
+    fun before() {
+        repoImpl = NewsRepoImpl(newsApiService,Dispatchers.IO, DataToDomainEntityMapper())
     }
 
     @Test
-    fun shouldGetHeadlines() {
+    fun shouldGetHeadlinesWhenResponseIsSuccess() {
         runBlocking {
-            val expected = Response.success(newsResponse(5))
-            `when`(newsApiService.getHeadLines()).thenReturn(expected)
+            val expectedResponse = Response.success(newsResponse(5))
+            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
+
             val response = repoImpl?.getHeadLines()
-            assertEquals(responseToModelMapper?.mapResponseToListOfModel(expected.body()!!),response)
+
+            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
             verify(newsApiService, times(1)).getHeadLines()
         }
     }
 
-        fun newsResponse(size:Int):NewsResponse {
-            val list = mutableListOf<NewsArticle>()
-            for (i in 1 .. size) {
-                list.add(NewsArticle("news description", Source("Tribune"),"News Title","imageUrl"))
-            }
-            return NewsResponse(list)
+    @Test
+    fun shouldNotGetHeadlinesWhenResponseIsError() {
+        runBlocking {
+            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
+            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
+
+            val response = repoImpl?.getHeadLines()
+
+            assertEquals(0,response?.size)
+            verify(newsApiService, times(1)).getHeadLines()
         }
+    }
 
+    @Test
+    fun shouldGetSearchedNewsWhenResponseIsSuccess() {
+        runBlocking {
+            val expectedResponse = Response.success(newsResponse(10))
+            `when`(newsApiService.searchNews(searchQuery)).thenReturn(expectedResponse)
 
+            val response = repoImpl?.searchNews(searchQuery)
+
+            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
+            verify(newsApiService, times(1)).searchNews(searchQuery)
+        }
+    }
+
+    @Test
+    fun shouldNotGetSearchedNewsWhenResponseIsError() {
+        runBlocking {
+            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
+            `when`(newsApiService.searchNews(searchQuery)).thenReturn(expectedResponse)
+
+            val response = repoImpl?.searchNews(searchQuery)
+
+            assertEquals(0, response?.size)
+            verify(newsApiService, times(1)).searchNews(searchQuery)
+        }
+    }
+
+    @Test
+    fun shouldGetListOfArticlesWhenInvokedMethodResponseIsSuccess() {
+        runBlocking {
+            val expectedResponse = Response.success(newsResponse(3))
+            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
+
+            val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
+
+            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
+            verify(newsApiService, times(1)).getHeadLines()
+        }
+    }
+
+    @Test
+    fun shouldGetListOfArticlesWhenInvokedMethodResponseIsError() {
+        runBlocking {
+            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
+            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
+
+            val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
+
+            assertEquals(0,response?.size)
+            verify(newsApiService, times(1)).getHeadLines()
+        }
+    }
+
+    private fun errorResponseBody():ResponseBody {
+        return "{status:error,message:UnAuthorized}".toResponseBody()
+    }
+
+    private fun newsResponse(size: Int): NewsResponse {
+        val list = mutableListOf<NewsArticle>()
+        for (i in 1..size) {
+            list.add(NewsArticle("news description", Source("Tribune"), "News Title", "imageUrl"))
+        }
+        return NewsResponse(list)
+    }
 }

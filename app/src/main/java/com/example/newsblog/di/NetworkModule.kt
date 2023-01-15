@@ -1,12 +1,15 @@
 package com.example.newsblog.di
 
 import com.example.newsblog.BuildConfig
+import com.example.newsblog.data.api.NewsApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.scope.get
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
@@ -40,4 +43,8 @@ val netWorkModule = module {
             .baseUrl(BuildConfig.BASE_URL)
             .build()
     }
+
+    fun providesNewsApi(retrofit: Retrofit) = retrofit.create(NewsApiService::class.java)
+
+    single<NewsApiService> { providesNewsApi(get()) }
 }
