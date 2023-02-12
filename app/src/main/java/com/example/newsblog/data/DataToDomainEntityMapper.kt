@@ -10,7 +10,6 @@ import timber.log.Timber
 class DataToDomainEntityMapper : EntityMapper<NewsResponse, NewsArticle, Article> {
 
     override fun mapResponseToListOfModel(response: NewsResponse): List<Article> {
-        Timber.tag(TAG).d("check "+response.newsArticles.toString())
         return response.newsArticles.map {
             mapResponseToModel(it)
         }

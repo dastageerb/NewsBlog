@@ -6,6 +6,7 @@ import com.example.newsblog.data.api.NewsApiService
 import com.example.newsblog.data.model.NewsResponse
 import com.example.newsblog.domain.Article
 import com.example.newsblog.domain.NewsRepository
+import com.example.newsblog.util.ApiResponse
 import com.example.newsblog.util.Constants.TAG
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -22,15 +23,14 @@ class NewsRepoImpl(
     override suspend fun searchNews(query: String) = getArticles { api.searchNews(query) }
 
     @VisibleForTesting
-    suspend fun getArticles(apiCall: suspend () -> Response<NewsResponse>): List<Article> {
+    suspend fun getArticles(apiCall: suspend () -> Response<NewsResponse>): ApiResponse<List<Article>> {
         return withContext(coroutineDispatcher) {
             return@withContext try {
                 val response = apiCall.invoke()
-                tag(TAG).d(" api Response${response.code()}")
-                mapper.mapResponseToListOfModel(response.body()!!)
+                ApiResponse.Success(mapper.mapResponseToListOfModel(response.body()!!))
             } catch (e: Exception) {
                 tag(TAG).d("getHeadLines: %s", e.message)
-                emptyList()
+                ApiResponse.Error(e.message.toString())
             }
         }
     }

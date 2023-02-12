@@ -4,6 +4,7 @@ import com.example.newsblog.data.api.NewsApiService
 import com.example.newsblog.data.model.NewsArticle
 import com.example.newsblog.data.model.NewsResponse
 import com.example.newsblog.data.model.Source
+import com.example.newsblog.util.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
@@ -23,7 +24,7 @@ import retrofit2.Response
 class NewsRepoImplTest {
 
     @Mock
-    lateinit var newsApiService:NewsApiService
+    lateinit var newsApiService: NewsApiService
 
     private var repoImpl:NewsRepoImpl?=null
 
@@ -42,7 +43,7 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.getHeadLines()
 
-            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
+            assertTrue(response is ApiResponse.Success)
             verify(newsApiService, times(1)).getHeadLines()
         }
     }
@@ -55,7 +56,7 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.getHeadLines()
 
-            assertEquals(0,response?.size)
+            assertTrue(response is ApiResponse.Error)
             verify(newsApiService, times(1)).getHeadLines()
         }
     }
@@ -68,7 +69,7 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.searchNews(searchQuery)
 
-            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
+            assertTrue(response is ApiResponse.Success)
             verify(newsApiService, times(1)).searchNews(searchQuery)
         }
     }
@@ -81,7 +82,8 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.searchNews(searchQuery)
 
-            assertEquals(0, response?.size)
+
+            assertTrue(response is ApiResponse.Error)
             verify(newsApiService, times(1)).searchNews(searchQuery)
         }
     }
@@ -94,7 +96,7 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
 
-            assertEquals(expectedResponse.body()?.newsArticles?.size,response?.size)
+            assertTrue(response is ApiResponse.Success)
             verify(newsApiService, times(1)).getHeadLines()
         }
     }
@@ -107,7 +109,8 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
 
-            assertEquals(0,response?.size)
+
+            assertTrue(response is ApiResponse.Error)
             verify(newsApiService, times(1)).getHeadLines()
         }
     }
