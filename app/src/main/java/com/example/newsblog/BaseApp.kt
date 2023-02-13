@@ -25,7 +25,7 @@ class BaseApp : Application() {
                     repositoryModule,
                     dispatchersModule,
                     viewModelModule,
-                    mapperModule
+                    useCaseModule
                 )
             )
         }

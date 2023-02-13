@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Greeting("Android")
-                    viewModel.getHeadlines()
+                   // viewModel.getHeadlines()
 
                 }
             }

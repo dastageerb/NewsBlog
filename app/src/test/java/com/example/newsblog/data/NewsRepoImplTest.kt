@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import retrofit2.Response
@@ -32,7 +33,7 @@ class NewsRepoImplTest {
 
     @Before
     fun before() {
-        repoImpl = NewsRepoImpl(newsApiService,Dispatchers.IO, DataToDomainEntityMapper())
+        repoImpl = NewsRepoImpl(newsApiService,Dispatchers.IO)
     }
 
     @Test
@@ -43,21 +44,21 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.getHeadLines()
 
-            assertTrue(response is ApiResponse.Success)
             verify(newsApiService, times(1)).getHeadLines()
+            assertTrue(response is ApiResponse.Success)
         }
     }
 
     @Test
     fun shouldNotGetHeadlinesWhenResponseIsError() {
         runBlocking {
-            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
-            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
+            `when`(newsApiService.getHeadLines()).thenThrow(NullPointerException("Response is null"))
+
 
             val response = repoImpl?.getHeadLines()
 
-            assertTrue(response is ApiResponse.Error)
             verify(newsApiService, times(1)).getHeadLines()
+            assertTrue(response is ApiResponse.Error)
         }
     }
 
@@ -69,54 +70,21 @@ class NewsRepoImplTest {
 
             val response = repoImpl?.searchNews(searchQuery)
 
-            assertTrue(response is ApiResponse.Success)
             verify(newsApiService, times(1)).searchNews(searchQuery)
+            assertTrue(response is ApiResponse.Success)
         }
     }
 
     @Test
     fun shouldNotGetSearchedNewsWhenResponseIsError() {
         runBlocking {
-            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
-            `when`(newsApiService.searchNews(searchQuery)).thenReturn(expectedResponse)
-
+            `when`(newsApiService.searchNews(searchQuery)).thenThrow(NullPointerException("Response is null"))
             val response = repoImpl?.searchNews(searchQuery)
 
 
             assertTrue(response is ApiResponse.Error)
             verify(newsApiService, times(1)).searchNews(searchQuery)
         }
-    }
-
-    @Test
-    fun shouldGetListOfArticlesWhenInvokedMethodResponseIsSuccess() {
-        runBlocking {
-            val expectedResponse = Response.success(newsResponse(3))
-            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
-
-            val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
-
-            assertTrue(response is ApiResponse.Success)
-            verify(newsApiService, times(1)).getHeadLines()
-        }
-    }
-
-    @Test
-    fun shouldGetListOfArticlesWhenInvokedMethodResponseIsError() {
-        runBlocking {
-            val expectedResponse = Response.error<NewsResponse>(404, errorResponseBody())
-            `when`(newsApiService.getHeadLines()).thenReturn(expectedResponse)
-
-            val response = repoImpl?.getArticles { newsApiService.getHeadLines() }
-
-
-            assertTrue(response is ApiResponse.Error)
-            verify(newsApiService, times(1)).getHeadLines()
-        }
-    }
-
-    private fun errorResponseBody():ResponseBody {
-        return "{status:error,message:UnAuthorized}".toResponseBody()
     }
 
     private fun newsResponse(size: Int): NewsResponse {
