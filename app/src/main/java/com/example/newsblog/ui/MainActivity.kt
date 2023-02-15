@@ -11,6 +11,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.newsblog.ui.ui.theme.NewsBlogTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,12 +30,27 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Greeting("Android")
-                   // viewModel.getHeadlines()
+                    NavHostView()
 
                 }
             }
         }
     }
+
+    @Composable
+    fun NavHostView() {
+        val navController = rememberNavController()
+
+        NavHost(navController, startDestination = "home") {
+            composable(route = "home") {
+                HomeScreen(viewModel = viewModel, navHostController = navController)
+            }
+            composable(route = "detail") {
+
+            }
+        }
+    }
+
 }
 
 @Composable

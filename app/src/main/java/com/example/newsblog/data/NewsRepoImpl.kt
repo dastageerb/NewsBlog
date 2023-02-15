@@ -21,7 +21,7 @@ class NewsRepoImpl(
         return withContext(coroutineDispatcher) {
             return@withContext try {
                 val response = apiCall.invoke()
-                ApiResponse.Success(response.body())
+                ApiResponse.Success(response.body()!!)
             } catch (e: Exception) {
                 Timber.tag(Constants.TAG).d("getHeadLines: %s", e.message)
                 ApiResponse.Error(e.message.toString())

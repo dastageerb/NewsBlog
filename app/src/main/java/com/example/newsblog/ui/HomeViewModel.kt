@@ -1,10 +1,11 @@
 package com.example.newsblog.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsblog.data.model.NewsArticle
 import com.example.newsblog.data.model.NewsResponse
-import com.example.newsblog.domain.NewsRepository
 import com.example.newsblog.domain.useCase.GetHeadLineUseCase
 import com.example.newsblog.domain.useCase.SearchNewsUseCase
 import com.example.newsblog.util.ApiResponse
@@ -22,7 +23,7 @@ class HomeViewModel constructor(
 ) : ViewModel() {
 
     private val _newsResponse : MutableStateFlow<ApiResponse<NewsResponse>> = MutableStateFlow(ApiResponse.Loading())
-    private val newsResponse :StateFlow<ApiResponse<NewsResponse>> = _newsResponse
+    val newsResponse :StateFlow<ApiResponse<NewsResponse>> = _newsResponse
 
     fun getHeadlines() = viewModelScope.launch(IODispatcher) {
         _newsResponse.value = getHeadLineUseCase()
@@ -30,5 +31,13 @@ class HomeViewModel constructor(
 
     fun searchHeadlines(searchQuery:String) = viewModelScope.launch(IODispatcher) {
         _newsResponse.value = searchNewsUseCase(searchQuery)
+    }
+
+    // viewState
+    private var _loadApi by mutableStateOf(true)
+    var loadApi:Boolean = _loadApi
+
+    fun loadApi(load:Boolean) {
+        _loadApi = load
     }
 }
