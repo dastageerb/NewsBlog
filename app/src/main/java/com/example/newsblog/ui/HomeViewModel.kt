@@ -20,6 +20,7 @@ class HomeViewModel constructor(
     private val MainDispatcher: CoroutineDispatcher,
     private val getHeadLineUseCase: GetHeadLineUseCase,
     private val searchNewsUseCase: SearchNewsUseCase
+
 ) : ViewModel() {
 
     private val _newsResponse : MutableStateFlow<ApiResponse<NewsResponse>> = MutableStateFlow(ApiResponse.Loading())
