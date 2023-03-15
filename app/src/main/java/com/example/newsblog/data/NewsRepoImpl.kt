@@ -1,6 +1,7 @@
 package com.example.newsblog.data
 
 import com.example.newsblog.data.api.NewsApiService
+import com.example.newsblog.data.model.NewsResponse
 import com.example.newsblog.domain.NewsRepository
 import com.example.newsblog.util.ApiResponse
 import com.example.newsblog.util.Constants

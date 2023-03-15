@@ -14,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.newsblog.ui.details.DetailsScreen
+import com.example.newsblog.ui.home.HomeScreen
 import com.example.newsblog.ui.ui.theme.NewsBlogTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +31,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
                     NavHostView()
 
                 }
@@ -41,12 +42,12 @@ class MainActivity : ComponentActivity() {
     fun NavHostView() {
         val navController = rememberNavController()
 
-        NavHost(navController, startDestination = "home") {
-            composable(route = "home") {
+        NavHost(navController, startDestination = Destination.HomeScreen.route) {
+            composable(route = Destination.HomeScreen.route) {
                 HomeScreen(viewModel = viewModel, navHostController = navController)
             }
-            composable(route = "detail") {
-
+            composable(route = Destination.DetailScreen.route) {
+                DetailsScreen(navController)
             }
         }
     }
